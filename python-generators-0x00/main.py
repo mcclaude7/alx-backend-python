@@ -1,4 +1,4 @@
-seed = __import__('seed')
+seed = __import__('0-stream_users')
 
 connection = seed.connect_db()
 if connection:
