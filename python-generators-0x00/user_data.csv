@@ -1,0 +1,5 @@
+user_id,name,email,age
+550e8400-e29b-41d4-a716-446655440000,Alice Smith,alice@example.com,30
+f47ac10b-58cc-4372-a567-0e02b2c3d479,Bob Johnson,bob@example.com,25
+c9bf9e57-1685-4c89-bafb-ff5af830be8a,Charlie Brown,charlie@example.com,40
+,Nancy Drew,nancy@example.com,28
