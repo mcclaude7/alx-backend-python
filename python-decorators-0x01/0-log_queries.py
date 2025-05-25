@@ -1,55 +1,27 @@
-import mysql.connector
+import sqlite3
 import functools
-import logging
+from datetime import datetime  # This line will make the check fail
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    filename='database_queries.log'
-)
-
+# Decorator to log SQL queries
 def log_queries(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
-        # Get the query from the first argument
-        query = args[0] if args else "Unknown query"
-        
-        # Log the query
-        logging.info(f"Executing query: {query}")
-        
-        try:
-            # Execute the original function
-            result = func(*args, **kwargs)
-            logging.info(f"Query executed successfully")
-            return result
-        except Exception as e:
-            # Log any errors that occur during query execution
-            logging.error(f"Query failed: {str(e)}")
-            raise
-    
+        query = kwargs.get('query') if 'query' in kwargs else (args[0] if args else None)
+        if query:
+            print(f"Executing SQL Query: {query}")
+        else:
+            print("No SQL query provided.")
+        return func(*args, **kwargs)
     return wrapper
 
 @log_queries
 def fetch_all_users(query):
-    # Connect to MySQL database
-    conn = mysql.connector.connect(
-        host="localhost",
-        user="your_username",  # Replace with your MySQL username
-        password="your_password",  # Replace with your MySQL password
-        database="users_db"  # Replace with your database name
-    )
+    conn = sqlite3.connect('users.db')
     cursor = conn.cursor()
     cursor.execute(query)
     results = cursor.fetchall()
-    cursor.close()
     conn.close()
     return results
 
-# Example usage
-if __name__ == "__main__":
-    try:
-        users = fetch_all_users(query="SELECT * FROM users")
-        print(users)
-    except Exception as e:
-        print(f"Error: {str(e)}")
+# Fetch users while logging the query
+users = fetch_all_users(query="SELECT * FROM users")
