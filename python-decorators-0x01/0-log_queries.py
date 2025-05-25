@@ -1,7 +1,6 @@
-import sqlite3
+import mysql.connector
 import functools
 import logging
-import datetime
 
 # Configure logging
 logging.basicConfig(
@@ -16,7 +15,7 @@ def log_queries(func):
         # Get the query from the first argument
         query = args[0] if args else "Unknown query"
         
-        # Log the query with timestamp
+        # Log the query
         logging.info(f"Executing query: {query}")
         
         try:
@@ -33,10 +32,17 @@ def log_queries(func):
 
 @log_queries
 def fetch_all_users(query):
-    conn = sqlite3.connect('users.db')
+    # Connect to MySQL database
+    conn = mysql.connector.connect(
+        host="localhost",
+        user="your_username",  # Replace with your MySQL username
+        password="your_password",  # Replace with your MySQL password
+        database="users_db"  # Replace with your database name
+    )
     cursor = conn.cursor()
     cursor.execute(query)
     results = cursor.fetchall()
+    cursor.close()
     conn.close()
     return results
 
