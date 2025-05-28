@@ -2,7 +2,7 @@
 """Unit tests for utlity functions in the utils module."""
 
 import unittest
-from utils import access_nested_map, get_json
+from utils import access_nested_map, get_json, memoize
 from parameterized import parameterized
 from unittest.mock import patch, Mock
 
@@ -56,6 +56,35 @@ class TestGetJson(unittest.TestCase):
 
         # Verify get_json returned the expected result
         self.assertEqual(result, test_payload)
+
+class TestMemoize(unittest.TestCase):
+    """Test the behavior of the memoize decorator."""
+
+    def test_memoize(self):
+        """Test that memoize caches method calls."""
+
+        class TestClass:
+            def a_method(self):
+                return 42
+
+            @memoize
+            def a_property(self):
+                return self.a_method()
+
+        with patch.object(TestClass, 'a_method', return_value=42) as mocked_method:
+            obj = TestClass()
+
+            # First call to a_property (should call a_method)
+            result1 = obj.a_property
+            # Second call to a_property (should use cache)
+            result2 = obj.a_property
+
+            # Assert correct value returned both times
+            self.assertEqual(result1, 42)
+            self.assertEqual(result2, 42)
+
+            # Assert a_method was called only once
+            mocked_method.assert_called_once()
 
 if __name__ == '__main__':
     unittest.main()
