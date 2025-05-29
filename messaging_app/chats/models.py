@@ -36,7 +36,7 @@ class Conversation(models.Model):
 class Message(models.Model):
     message_id = models.AutoField(primary_key=True)
     conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE, null=True, blank=True)
-    Message_body = models.TextField(null=True)
+    message_body = models.TextField(null=True)
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
     recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
     content = models.TextField()
