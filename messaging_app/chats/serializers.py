@@ -26,7 +26,7 @@ class MessageSerializer(serializers.ModelSerializer):
     sender = CustomUserSerializer(read_only=True)
     recipient = CustomUserSerializer(read_only=True)
 
-    message_body = serializers.CharField()
+    #message_body = serializers.CharField()
     content = serializers.CharField()
 
     class Meta:
@@ -34,7 +34,7 @@ class MessageSerializer(serializers.ModelSerializer):
         fields = [
             'message_id',
             'conversation',
-            'message_body',
+            #'message_body',
             'sender',
             'recipient',
             'content',
@@ -55,7 +55,7 @@ class ConversationSerializer(serializers.ModelSerializer):
             'updated_at',
             'status',
             'topic',
-            'Conversation_type',
+            'conversation_type',
             'messages'
         ]
 

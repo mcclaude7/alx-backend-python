@@ -28,7 +28,7 @@ class Conversation(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     status = models.CharField(max_length=20, choices=[('open', 'Open'),('closed', 'Closed')])
     topic = models.CharField(max_length=100, blank=True, null=True)
-    Conversation_type = models.CharField(max_length=20, choices=[('private','Private'),('group','Group'),('support','Support')], default='private', null=True, blank=True)
+    conversation_type = models.CharField(max_length=20, choices=[('private','Private'),('group','Group'),('support','Support')], default='private', null=True, blank=True)
 
     def __str__(self):
         return self.conversation_id
@@ -36,14 +36,17 @@ class Conversation(models.Model):
 class Message(models.Model):
     message_id = models.AutoField(primary_key=True)
     conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE, null=True, blank=True)
-    message_body = models.TextField(null=True)
+    #message_body = models.TextField(null=True)
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
     recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
     content = models.TextField()
     sent_at = models.DateTimeField(auto_now_add=True)
     
 
-    def __str__(self):
-        return f"Message from {self.sender} to {self.recipient} at {self.timestamp}"
+    #def __str__(self):
+        #return f"Message from {self.sender} to {self.recipient} at {self.timestamp}"
 
-# Create your models here.
+    #def __str__(self):
+        #return f"Message from {self.sender} to {self.recipient} at {self.sent_at}"
+    def __str__(self):
+        return str(self.message_id)

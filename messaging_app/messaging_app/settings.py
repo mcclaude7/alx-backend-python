@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -73,11 +74,18 @@ WSGI_APPLICATION = 'messaging_app.wsgi.application'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',  # Optional, for additional authentication methods
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',  # Optional, for additional authentication methods
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),      # Token valide 30 minutes
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),         # Le refresh token dure 1 jour
+    'AUTH_HEADER_TYPES': ('Bearer',),                    # Format de l'en-tête Authorization: Bearer <token>
 }
 
 AUTH_USER_MODEL = 'chats.CustomUser'
@@ -88,8 +96,12 @@ AUTH_USER_MODEL = 'chats.CustomUser'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'messaging_db',
+        'USER': 'root',
+        'PASSWORD': 'Kabe@9168Clde',
+        'HOST': 'localhost',   
+        'PORT': '3306',        
     }
 }
 
