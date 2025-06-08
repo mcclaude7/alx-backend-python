@@ -8,13 +8,15 @@ from django.contrib.auth import get_user_model
 from .models import Conversation, Message
 from .serializers import ConversationSerializer, MessageSerializer
 from .permissions import IsConversationParticipant, IsMessageParticipant  
+from django_filters.rest_framework import DjangoFilterBackend
+from .filters import MessageFilter
+from .pagination import MessagePagination
 
 User = get_user_model()
 
 class ConversationViewSet(viewsets.ModelViewSet):
     serializer_class = ConversationSerializer
     permission_classes = [IsConversationParticipant]
-    #permission_classes = [IsAuthenticated, IsConversationParticipant]
     filter_backends = [filters.SearchFilter]
     search_fields = ['topic', 'Conversation_type', 'status']
 
@@ -31,16 +33,18 @@ class ConversationViewSet(viewsets.ModelViewSet):
 
 class MessageViewSet(viewsets.ModelViewSet):
     serializer_class = MessageSerializer
-    permission_classes = [IsMessageParticipant]
-    #permission_classes = [IsAuthenticated, IsMessageParticipant]
-    filter_backends = [filters.SearchFilter]
+    permission_classes = [IsMessageParticipant] 
+    #filter_backends = [filters.SearchFilter]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_class = MessageFilter
+    pagination_class = MessagePagination
     search_fields = ['message_body', 'content']
 
-    def get_queryset(self):
-        
+    def get_queryset(self):    
         return Message.objects.filter(
             Q(sender=self.request.user) | Q(recipient=self.request.user)
         ).select_related('conversation', 'sender', 'recipient')
+    
     def perform_create(self, serializer):
         conversation_id = self.request.data.get('conversation')
         conversation = get_object_or_404(Conversation, id=conversation_id)
@@ -52,5 +56,4 @@ class MessageViewSet(viewsets.ModelViewSet):
             )
 
         serializer.save(sender=self.request.user)
-    # def perform_create(self, serializer):
-    #     serializer.save(sender=self.request.user)
+    
