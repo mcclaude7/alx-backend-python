@@ -36,17 +36,10 @@ class Conversation(models.Model):
 class Message(models.Model):
     message_id = models.AutoField(primary_key=True)
     conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE, null=True, blank=True)
-    #message_body = models.TextField(null=True)
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
     recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
     content = models.TextField()
     sent_at = models.DateTimeField(auto_now_add=True)
     
-
-    #def __str__(self):
-        #return f"Message from {self.sender} to {self.recipient} at {self.timestamp}"
-
-    #def __str__(self):
-        #return f"Message from {self.sender} to {self.recipient} at {self.sent_at}"
     def __str__(self):
         return str(self.message_id)
