@@ -172,6 +172,7 @@ X_FRAME_OPTIONS = 'DENY'
 
 MIDDLEWARE = [
     # other middleware...
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
     'chats.middleware.RequestLoggingMiddleware',
 ]
 
