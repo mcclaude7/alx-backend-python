@@ -76,9 +76,13 @@ class MessageSerializer(serializers.ModelSerializer):
     recipient = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(), write_only=True
     )
+    conversation = serializers.PrimaryKeyRelatedField(
+    queryset=Conversation.objects.all(), write_only=True
+    )
     sender_detail = CustomUserSerializer(source='sender', read_only=True)
     recipient_detail = CustomUserSerializer(source='recipient', read_only=True)
     content = serializers.CharField()
+    #conversation_detail = ConversationSerializer(source='conversation', read_only=True)
 
     class Meta:
         model = Message

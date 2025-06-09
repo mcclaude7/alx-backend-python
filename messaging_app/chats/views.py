@@ -56,7 +56,9 @@ class MessageViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         conversation_id = self.request.data.get('conversation')
         recipient_id = self.request.data.get('recipient')
-        conversation = get_object_or_404(Conversation, id=conversation_id)
+
+        conversation = get_object_or_404(Conversation, pk=conversation_id)
+        #conversation = get_object_or_404(Conversation, id=conversation_id)
         #conversation = get_object_or_404(Conversation, conversation_id=conversation_id)
         recipient = get_object_or_404(User, pk=recipient_id)
 
@@ -68,5 +70,8 @@ class MessageViewSet(viewsets.ModelViewSet):
         if recipient not in conversation.participants.all():
             raise serializers.ValidationError('Recipient is not a participant of the conversation.')
 
-        serializer.save(sender=self.request.user)
+        serializer.save(sender=self.request.user,
+                        recipient=recipient,
+                        conversation=conversation
+                        )
     
