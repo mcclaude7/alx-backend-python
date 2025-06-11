@@ -27,7 +27,6 @@ def build_thread(message):
         'replies': [build_thread(reply) for reply in message.replies.all()]
     }
 
-
 @login_required
 def threaded_messages_view(request):
     user = request.user
@@ -41,3 +40,10 @@ def threaded_messages_view(request):
     threads = [build_thread(message) for message in messages]
 
     return render(request, 'messaging/threaded_messages.html', {'threads': threads})
+
+@login_required
+def unread_inbox_view(request):
+    user = request.user
+    unread_messages = Message.unread.for_user(user)
+
+    return render(request, 'messaging/unread_inbox.html', {'messages': unread_messages})

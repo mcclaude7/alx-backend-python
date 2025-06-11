@@ -4,6 +4,10 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import Prefetch
 
+class UnreadMessagesManager(models.Manager):
+    def for_user(self, user):
+        return self.filter(receiver=user, read=False).only('id', 'content', 'timestamp', 'sender')
+
 class Message(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
@@ -11,6 +15,7 @@ class Message(models.Model):
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
     edited = models.BooleanField(default=False)
+    read = models.BooleanField(default=False)  # NEW FIELD
     parent_message = models.ForeignKey(
         'self',
         on_delete=models.CASCADE,
@@ -18,6 +23,9 @@ class Message(models.Model):
         blank=True,
         related_name='replies'
     )
+    objects = models.Manager()  # Default manager
+    unread = UnreadMessagesManager()  # Custom unread manager
+
     def get_user_conversations(user):
         messages = Message.objects.filter(receiver=user, parent_message__isnull=True)\
             .select_related('sender', 'receiver')\
