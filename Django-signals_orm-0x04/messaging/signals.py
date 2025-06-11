@@ -1,7 +1,9 @@
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
-from .models import Message, Notification
+from .models import Message, MessageHistory, Notification
+from django.contrib.auth.models import User
 
+# Signal to create a Notification when a new message is created
 @receiver(post_save, sender=Message)
 def create_notification(sender, instance, created, **kwargs):
     if created:
@@ -9,3 +11,18 @@ def create_notification(sender, instance, created, **kwargs):
             user=instance.receiver,
             message=instance
         )
+
+# Signal to track message edits
+@receiver(pre_save, sender=Message)
+def log_message_edit(sender, instance, **kwargs):
+    if instance.id:  # message already exists, check for content change
+        try:
+            old_message = Message.objects.get(id=instance.id)
+            if old_message.content != instance.content:
+                MessageHistory.objects.create(
+                    message=old_message,
+                    old_content=old_message.content
+                )
+                instance.edited = True
+        except Message.DoesNotExist:
+            pass
