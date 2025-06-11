@@ -3,6 +3,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import Prefetch
+from .managers import UnreadMessagesManager
 
 class UnreadMessagesManager(models.Manager):
     def for_user(self, user):
