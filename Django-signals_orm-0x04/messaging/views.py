@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.shortcuts import redirect
 from django.contrib.auth.models import User
+from django.views.decorators.cache import cache_page
 
 @login_required
 def delete_user(request):
@@ -47,3 +48,9 @@ def unread_inbox_view(request):
     unread_messages = Message.unread.unread_for_user(user).only('id', 'content', 'timestamp', 'sender', 'receiver')
 
     return render(request, 'messaging/unread_inbox.html', {'messages': unread_messages})
+
+# Cache this view for 60 seconds
+@cache_page(60)
+def conversation_view(request):
+    messages = Message.objects.all().order_by('-timestamp')  # Customize query as needed
+    return render(request, 'chats/conversation.html', {'messages': messages})
