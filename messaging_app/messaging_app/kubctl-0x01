@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Ensure script stops on error
+set -e
+
+echo "Scaling Django app deployment to 3 replicas..."
+kubectl scale deployment messaging-app-deployment --replicas=3
+
+echo "Waiting for pods to become ready..."
+sleep 10
+
+echo "Current pods:"
+kubectl get pods -l app=messaging-app
+
+echo "Resource usage (CPU/Memory):"
+kubectl top pods || echo "kubectl top' failed. Make sure Metrics Server is installed."
+
+echo "Performing load test on localhost:8000 with wrk (10s, 10 threads, 100 connections)..."
+wrk -t10 -c100 -d10s http://localhost:8000 || echo "wrk not installed or port-forward not active."
