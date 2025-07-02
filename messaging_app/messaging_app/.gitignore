@@ -1,1 +1,64 @@
-messaging_app/messaging_app/wrk/
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.pyd
+*.env
+*.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Django
+*.log
+*.pot
+*.pyc
+*.sqlite3
+db.sqlite3
+media/
+staticfiles/
+local_settings.py
+
+# VS Code / PyCharm
+.vscode/
+.idea/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Env files
+.env
+*.env
+
+# Docker
+*.pid
+*.pid.lock
+*.db
+docker-compose.override.yml
+
+# Coverage reports
+htmlcov/
+coverage.xml
+.coverage
+.cache
+
+# Build
+build/
+dist/
+*.egg-info/
+
+# Pip
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Migrations
+*/migrations/__pycache__/
+*/migrations/*.py[cod]
+*/migrations/*.pyc
