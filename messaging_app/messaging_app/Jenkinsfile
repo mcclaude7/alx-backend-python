@@ -2,27 +2,27 @@ pipeline {
     agent any
 
     environment {
-        // Set environment variables if needed
-        VIRTUAL_ENV = "${env.WORKSPACE}/venv"
+        IMAGE_NAME = "mcclaude7/messaging-app"
+        DOCKER_CREDENTIALS_ID = "dockerhub"
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git credentialsId: 'your-github-credentials-id', url: 'https://github.com/yourusername/alx-backend-python.git'
+                git credentialsId: 'github-creds', url: 'https://github.com/mcclaude7/alx-backend-python.git'
             }
         }
+
         stage('Setup Python Environment') {
             steps {
-                // Create virtual environment and install dependencies
                 sh '''
                 python3 -m venv venv
                 . venv/bin/activate
-                pip install --upgrade pip
                 pip install -r messaging_app/requirements.txt
                 '''
             }
         }
+
         stage('Run Tests') {
             steps {
                 sh '''
@@ -36,6 +36,24 @@ pipeline {
                 }
             }
         }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    dockerImage = docker.build("${IMAGE_NAME}")
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', DOCKER_CREDENTIALS_ID) {
+                        dockerImage.push("latest")
+                    }
+                }
+            }
+        }
     }
 
     post {
@@ -44,3 +62,4 @@ pipeline {
         }
     }
 }
+
