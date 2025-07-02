@@ -1,0 +1,46 @@
+pipeline {
+    agent any
+
+    environment {
+        // Set environment variables if needed
+        VIRTUAL_ENV = "${env.WORKSPACE}/venv"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git credentialsId: 'your-github-credentials-id', url: 'https://github.com/yourusername/alx-backend-python.git'
+            }
+        }
+        stage('Setup Python Environment') {
+            steps {
+                // Create virtual environment and install dependencies
+                sh '''
+                python3 -m venv venv
+                . venv/bin/activate
+                pip install --upgrade pip
+                pip install -r messaging_app/requirements.txt
+                '''
+            }
+        }
+        stage('Run Tests') {
+            steps {
+                sh '''
+                . venv/bin/activate
+                pytest --junitxml=reports/report.xml
+                '''
+            }
+            post {
+                always {
+                    junit 'reports/report.xml'
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline finished.'
+        }
+    }
+}
