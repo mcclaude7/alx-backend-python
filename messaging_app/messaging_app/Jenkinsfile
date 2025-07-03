@@ -9,7 +9,9 @@ pipeline {
         stage('Clone Repository') {
             steps {
                 // Use Jenkins built-in git plugin
-                git branch: 'main', url: 'https://github.com/mcclaude7/alx-backend-python.git'
+                git branch: 'main',
+                    credentialsId: '8644b690-8b69-421c-8b7c-4a4461159bfa',
+                    url: 'https://github.com/mcclaude7/alx-backend-python.git'
             }
         }
 
